@@ -1,58 +1,115 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, {useState} from 'react';
+import {
+    AppBar,
+    BottomNavigation,
+    BottomNavigationAction,
+    Container,
+    Grid,
+    Icon,
+    IconButton,
+    Toolbar,
+    Typography
+} from "@material-ui/core";
+import {Route, Switch, useHistory} from "react-router-dom";
+import Global from "./component/Global";
+import India from "./component/India";
+import {About} from "./component/About";
+import {makeStyles} from "@material-ui/core/styles";
+import WorldIcon from '@material-ui/icons/Language'
+import PinIcon from '@material-ui/icons/PinDrop'
+import InfoIcon from '@material-ui/icons/Info'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+    },
+    main: {
+        flex: 1
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    toolbar: {
+        minHeight: 128,
+        alignItems: 'flex-start',
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
+    appBar: {
+        top: "auto",
+        bottom: 0
+    }
+}));
+
+const BottomNav = () => {
+    const classes = useStyles();
+    const [value, setValue] = useState();
+    const history = useHistory();
+    return (
+        <AppBar color="primary" className={classes.appBar}>
+            <BottomNavigation
+                value={value}
+                onChange={(event, newValue) => {
+                    switch (newValue) {
+                        case 0:
+                            history.push("/");
+                            break;
+                        case 1:
+                            history.push("/india");
+                            break;
+                        case 2:
+                            history.push("/about");
+                            break
+                    }
+                    setValue(newValue);
+                }}
+                showLabels
+            >
+                <BottomNavigationAction label="Global" icon={<WorldIcon/>}/>
+                <BottomNavigationAction label="India" icon={<PinIcon/>}/>
+                <BottomNavigationAction label="About" icon={<InfoIcon/>}/>
+            </BottomNavigation>
+         </AppBar>
+    )
 }
 
-export default App;
+
+function App(props) {
+
+    const classes = useStyles();
+
+    return (
+        <Container  fixed={true}>
+            <Grid  container={true}>
+                <Grid sm={12} style={{flexGrow: 1}} item={true}>
+
+                    <AppBar position="static">
+                        <Toolbar>
+                            <Typography variant="h6" className={classes.title}>
+                                Covid-19 Tracking app
+                            </Typography>
+                            <IconButton color={"inherit"} href={""} target={"_blank"} onClick={e=>window.open("https://github.com/tektektea","_blank")}>
+                                <Icon fontSize={"default"} className="fa fa-github"/>
+                            </IconButton>
+                        </Toolbar>
+                    </AppBar>
+
+                    <Switch>
+                        <Route exact={true} path={"/"} component={Global}/>
+                        <Route exact={true} path={"/india"} component={India}/>
+                        <Route exact={true} path={"/about"} component={About}/>
+                    </Switch>
+                </Grid>
+
+                <Grid sm={12} item={true}>
+                    <BottomNav/>
+                </Grid>
+            </Grid>
+        </Container>
+    );
+}
+
+export default (App);
