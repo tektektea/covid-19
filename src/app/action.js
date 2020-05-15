@@ -1,23 +1,35 @@
 import axios from 'axios';
 
-export const FETCH_GLOBAL = "fetch global";
-export const FETCH_INDIA = "fetch india";
+//TYPES
+export const FETCH_GLOBAL_REQUEST = "FETCH_GLOBAL_REQUEST";
+export const FETCH_GLOBAL_SUCCESS = "FETCH_GLOBAL_SUCCESS";
+export const FETCH_GLOBAL_FAILURE = "FETCH_GLOBAL_FAILURE";
+export const FETCH_INDIA_REQUEST = "FETCH_INDIA_REQUEST";
+export const FETCH_INDIA_SUCCESS = "FETCH_INDIA_SUCCESS";
+export const FETCH_INDIA_FAILURE = "FETCH_INDIA_FAILURE"
 
 const ROOT_API = "https://api.covid19api.com";
 const INDIA_API = "https://api.covid19india.org/state_district_wise.json";
 
 export const fetchGlobal = () => {
-    console.log("fetching")
+    // console.log("fetching")
     return dispatch => {
+        dispatch({type: FETCH_GLOBAL_REQUEST})
         axios.get(ROOT_API + "/summary")
             .then(res => {
-                dispatch({type: FETCH_GLOBAL, payload: res.data})
+                dispatch({type: FETCH_GLOBAL_SUCCESS, payload: res.data})
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err)
+                //for dev 
+                dispatch({type: FETCH_GLOBAL_FAILURE, payload: err})
+            })
     }
 }
+
 export const fetchIndia = () => {
     return dispatch => {
+        dispatch({type: FETCH_INDIA_REQUEST})
         axios.get(INDIA_API)
             .then(res => {
                 const data = Object.keys(res.data).map(state => {
@@ -51,8 +63,11 @@ export const fetchIndia = () => {
                     deaths,
                     recovered
                 }
-                dispatch({type: FETCH_INDIA, payload: {data,summary}})
+                dispatch({type: FETCH_INDIA_SUCCESS, payload: {data,summary}})
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err)
+                dispatch({type: FETCH_INDIA_FAILURE, payload: err})
+            })
     }
 }

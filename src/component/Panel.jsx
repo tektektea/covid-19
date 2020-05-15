@@ -1,5 +1,12 @@
 import React from "react";
-import {Card,CardContent,Icon,Paper,Typography,CardHeader} from "@material-ui/core";
+import {
+    // Card,
+    // CardContent,
+    Icon,
+    Paper,
+    Typography,
+    // CardHeader
+} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 
 const styles={
@@ -25,7 +32,8 @@ const styles={
 // }
 export const Panel=({icon,title,caption})=>{
     return (
-        <Paper  style={styles.root}>
+        //elevation 0 makes it look more equal in height due to no shadows
+        <Paper elevation={0} style={styles.root}>
             <Icon color={"primary"} fontSize={"large"}>{icon}</Icon>
             <Divider variant={"middle"}/>
             <Typography variant={"h6"}>{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(title)}</Typography>

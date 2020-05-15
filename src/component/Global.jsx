@@ -11,6 +11,7 @@ import {Panel} from "./Panel";
 import {fetchGlobal} from "../app/action";
 import {connect} from "react-redux";
 import Grid from "@material-ui/core/Grid";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -51,17 +52,33 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
-const mapStateToProps = state => ({global: state.global, summary: state.globalSummary})
+
+const mapStateToProps = state => ({loading: state.isLoadingGlobal, global: state.global, summary: state.globalSummary})
 const mapDispatchToProps = {
     fetchGlobalData: fetchGlobal,
 }
 
-function Global({fetchGlobalData, global = [], summary}) {
+function Global({loading, fetchGlobalData, global = [], summary}) {
     const classes = useStyles();
 
     useEffect(() => {
         fetchGlobalData()
     }, [])
+
+    if(loading === true) {
+        return (
+            <Grid
+            container={true}
+            spacing={10}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '50vh' }}
+            >
+                <CircularProgress size={60}/>
+            </Grid>
+        )
+    }
     return (
         <div className={classes.root}>
             <Grid container={true}>
@@ -80,37 +97,40 @@ function Global({fetchGlobalData, global = [], summary}) {
                 </Grid>
             </Grid>
             {Array.isArray(global) && global.map(country => (
-                <ExpansionPanel>
-                    <ExpansionPanelSummary
-                        expandIcon={<ExpandMoreIcon/>}
-                        aria-controls="panel1c-content"
-                        id="panel1c-header"
-                    >
-                        <Typography style={{flex: 1}}>{country.Country}</Typography>
+                //need to add key for react lists
+                <div key={country.Country}>
+                    <ExpansionPanel>
+                        <ExpansionPanelSummary
+                            expandIcon={<ExpandMoreIcon/>}
+                            aria-controls="panel1c-content"
+                            id="panel1c-header"
+                        >
+                            <Typography style={{flex: 1}}>{country.Country}</Typography>
 
-                        <div>
-                            <Typography className={classes.heading}>Confirmed Case</Typography>
-                            <Chip color={"primary"}
-                                  label={new Intl.NumberFormat('en-IN', {maximumSignificantDigits: 3}).format(country.TotalConfirmed)}/>
-                        </div>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails className={classes.details}>
-                        <div className={classes.column}>
-                            <Typography className={classes.heading}>Country: {country.Country}</Typography>
-                        </div>
+                            <div>
+                                <Typography className={classes.heading}>Confirmed Case</Typography>
+                                <Chip color={"primary"}
+                                    label={new Intl.NumberFormat('en-IN', {maximumSignificantDigits: 3}).format(country.TotalConfirmed)}/>
+                            </div>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails className={classes.details}>
+                            <div className={classes.column}>
+                                <Typography className={classes.heading}>Country: {country.Country}</Typography>
+                            </div>
 
-                        <div className={classes.column}>
-                            <Typography className={classes.heading}>Confirmed Case
-                                : {new Intl.NumberFormat('en-IN', {maximumFractionDigits: 3}).format(country.TotalConfirmed)}</Typography>
-                            <Typography className={classes.heading}>Deaths
-                                : {new Intl.NumberFormat('en-IN', {maximumFractionDigits: 3}).format(country.TotalDeaths)}</Typography>
-                            <Typography className={classes.heading}>Recovered
-                                : {new Intl.NumberFormat('en-IN', {maximumFractionDigits: 3}).format(country.TotalRecovered)}</Typography>
-                        </div>
+                            <div className={classes.column}>
+                                <Typography className={classes.heading}>Confirmed Case
+                                    : {new Intl.NumberFormat('en-IN', {maximumFractionDigits: 3}).format(country.TotalConfirmed)}</Typography>
+                                <Typography className={classes.heading}>Deaths
+                                    : {new Intl.NumberFormat('en-IN', {maximumFractionDigits: 3}).format(country.TotalDeaths)}</Typography>
+                                <Typography className={classes.heading}>Recovered
+                                    : {new Intl.NumberFormat('en-IN', {maximumFractionDigits: 3}).format(country.TotalRecovered)}</Typography>
+                            </div>
 
-                    </ExpansionPanelDetails>
-                    <Divider/>
-                </ExpansionPanel>
+                        </ExpansionPanelDetails>
+                        <Divider/>
+                    </ExpansionPanel>
+                </div>
             ))}
 
         </div>

@@ -14,14 +14,31 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import {Panel} from "./Panel";
 import Grid from "@material-ui/core/Grid";
+import CircularProgress from "@material-ui/core/CircularProgress"
 
-const mapStateToProps = state => ({india: state.india, summary: state.indiaSummary})
+const mapStateToProps = state => ({loading: state.isLoadingIndia, india: state.india, summary: state.indiaSummary})
 const mapDispatchToProps = {fetchIndia}
 
-const India = ({india = {}, fetchIndia, summary}) => {
+const India = ({loading, india = {}, fetchIndia, summary}) => {
     useEffect(() => {
         fetchIndia()
     }, [])
+
+    if(loading === true) {
+        return (
+            <Grid 
+                container={true}
+                spacing={10}
+                direction="column"
+                alignItems="center"
+                justify="center"
+                //minHeight 100vh is too low
+                style={{ minHeight: '50vh'}}
+            >
+                <CircularProgress size={60}/>
+            </Grid>
+        )
+    }
     return (
         <>
             <Grid container={true}>
@@ -40,7 +57,7 @@ const India = ({india = {}, fetchIndia, summary}) => {
                 </Grid>
             </Grid>
             {Array.isArray(india) && india.map(state => (
-                <ExpansionPanel key={state}>
+                <ExpansionPanel key={state.State}>
                     <ExpansionPanelSummary
                         expandIcon={<ExpandMoreIcon/>}
                         aria-controls="panel1c-content"
@@ -57,7 +74,8 @@ const India = ({india = {}, fetchIndia, summary}) => {
 
                         <List style={{flex: 1}} title={"District wise"} subheader={"District wise"}>
                             {state.districts.map(d => (
-                                <ListItem>
+                                //need key here also
+                                <ListItem key={d.name}>
                                     <ListItemText primary={d.name}
                                                   secondary={`Death: ${d.deceased}  Recovered : ${d.recovered}`}/>
                                     <ListItemSecondaryAction>
