@@ -18,6 +18,9 @@ import {makeStyles} from "@material-ui/core/styles";
 import WorldIcon from '@material-ui/icons/Language'
 import PinIcon from '@material-ui/icons/PinDrop'
 import InfoIcon from '@material-ui/icons/Info'
+import LinearProgress from "@material-ui/core/LinearProgress";
+import {connect} from "react-redux";
+import mapDispatchToProps from "react-redux/lib/connect/mapDispatchToProps";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -46,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 const BottomNav = () => {
     const classes = useStyles();
-    const [value, setValue] = useState();
+    const [value, setValue] = useState(0);
     const history = useHistory();
     return (
         <AppBar color="primary" className={classes.appBar}>
@@ -77,16 +80,14 @@ const BottomNav = () => {
 }
 
 
-function App(props) {
+function App({loading}) {
 
     const classes = useStyles();
 
     return (
-        <Container  fixed={true}>
             <Grid  container={true}>
                 <Grid sm={12} style={{flexGrow: 1}} item={true}>
-
-                    <AppBar position="static">
+                    <AppBar style={{top:0,bottom:"auto"}}>
                         <Toolbar>
                             <Typography variant="h6" className={classes.title}>
                                 Covid-19 Tracking app
@@ -95,8 +96,10 @@ function App(props) {
                                 <Icon fontSize={"default"} className="fa fa-github"/>
                             </IconButton>
                         </Toolbar>
+                        {loading && <LinearProgress  color={"secondary"} variant="indeterminate"/>}
                     </AppBar>
-
+                </Grid>
+                <Grid sm={12} style={{marginTop:50,marginBottom:50}} item={true}>
                     <Switch>
                         <Route exact={true} path={"/"} component={Global}/>
                         <Route exact={true} path={"/india"} component={India}/>
@@ -108,8 +111,7 @@ function App(props) {
                     <BottomNav/>
                 </Grid>
             </Grid>
-        </Container>
     );
 }
-
-export default (App);
+const mapStateToProps=state=>({loading:state.loading})
+export default connect(mapStateToProps,mapDispatchToProps) (App);

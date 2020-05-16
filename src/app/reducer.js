@@ -1,18 +1,20 @@
-import {FETCH_GLOBAL, FETCH_INDIA} from "./action";
+import {FETCH_GLOBAL, FETCH_INDIA, SET_LOADING} from "./action";
 
 const initialState={
     global: [],
     globalSummary:{},
     indiaSummary:{},
-    india:[]
+    india:[],
+    loading:false
 }
 export const reducer=(state=initialState,action)=>{
     switch (action.type) {
         case FETCH_GLOBAL:
-            console.log("data",action.payload)
-            return {...state,global:action.payload.Countries,globalSummary:action.payload.Global}
+            return {...state,global:action.payload.Countries,globalSummary:action.payload.Global,loading: false}
         case FETCH_INDIA:
-            return {...state,india:action.payload.data,indiaSummary:action.payload.summary}
+            return {...state,india:action.payload.data,indiaSummary:action.payload.summary,loading: false}
+        case SET_LOADING:
+            return {...state,loading:true}
         default:
             return initialState;
 

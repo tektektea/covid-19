@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export const FETCH_GLOBAL = "fetch global";
 export const FETCH_INDIA = "fetch india";
+export const SET_LOADING = "set loading";
 
 const ROOT_API = "https://api.covid19api.com";
 const INDIA_API = "https://api.covid19india.org/state_district_wise.json";
@@ -14,6 +15,11 @@ export const fetchGlobal = () => {
                 dispatch({type: FETCH_GLOBAL, payload: res.data})
             })
             .catch(err => console.error(err))
+    }
+}
+export const setLoading = (value) => {
+    return dispatch => {
+        dispatch({type:SET_LOADING,payload:value})
     }
 }
 export const fetchIndia = () => {
