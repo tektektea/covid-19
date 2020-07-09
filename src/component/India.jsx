@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {fetchIndia, setLoading} from "../app/action";
+import {fetchIndia} from "../app/action";
 import {connect} from 'react-redux';
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -15,35 +15,36 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import {Panel} from "./Panel";
 import Grid from "@material-ui/core/Grid";
 
-const mapStateToProps = state => ({india: state.india, summary: state.indiaSummary,loading:state.loading})
-const mapDispatchToProps = {fetchIndia,setLoading}
+const mapStateToProps = state => ({loading: state.loading, india: state.india, summary: state.indiaSummary})
+const mapDispatchToProps = {fetchIndia}
 
-const India = ({india = {}, fetchIndia, summary, loading, setLoading}) => {
+const India = ({loading, india = {}, fetchIndia, summary}) => {
     useEffect(() => {
-        setLoading(true);
         fetchIndia()
     }, [])
+
+    if (loading === true) {
+        return null
+    }
     return (
         <>
-            {loading ? null :
-                <>
-                    <Grid alignItems={"stretch"} container={true}>
-
-                        <Grid alignItems={"stretch"} xs={4} container={true}>
-                            <Panel icon={"accessible"} caption={"Confirmed case"} title={summary.confirmed}/>
-
+            <Grid spacing={2} container={true}>
+                <Grid item xs={12} sm={12} md={12}>
+                    <Grid spacing={2} container={true}>
+                        <Grid container={true} xs={4} item={true}>
+                            {!loading && <Panel icon={"accessible"} caption={"Confirmed case"} title={summary.confirmed}/> }
                         </Grid>
-                        <Grid alignItems={"stretch"} xs={4} container={true}>
-                            <Panel icon={"sentiment_very_dissatisfied"} caption={"Deaths"} title={summary.deaths}/>
-
+                        <Grid xs={4} container={true} item={true}>
+                            {!loading && <Panel icon={"sentiment_very_dissatisfied"} caption={"Deaths"} title={summary.deaths}/> }
                         </Grid>
-                        <Grid alignItems={"stretch"} xs={4} container={true}>
-                            <Panel icon={"healing"} caption={"Recovered"} title={summary.recovered}/>
-
+                        <Grid xs={4} container={true} item={true}>
+                            {!loading && <Panel icon={"healing"} caption={"Recovered"} title={summary.recovered}/>}
                         </Grid>
                     </Grid>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12}>
                     {Array.isArray(india) && india.map(state => (
-                        <ExpansionPanel key={state}>
+                        <ExpansionPanel key={state.State}>
                             <ExpansionPanelSummary
                                 expandIcon={<ExpandMoreIcon/>}
                                 aria-controls="panel1c-content"
@@ -60,7 +61,8 @@ const India = ({india = {}, fetchIndia, summary, loading, setLoading}) => {
 
                                 <List style={{flex: 1}} title={"District wise"} subheader={"District wise"}>
                                     {state.districts.map(d => (
-                                        <ListItem>
+                                        //need key here also
+                                        <ListItem key={d.name}>
                                             <ListItemText primary={d.name}
                                                           secondary={`Death: ${d.deceased}  Recovered : ${d.recovered}`}/>
                                             <ListItemSecondaryAction>
@@ -71,22 +73,14 @@ const India = ({india = {}, fetchIndia, summary, loading, setLoading}) => {
                                     ))}
                                 </List>
 
-                                {/*<div>*/}
-                                {/*    <Typography>Country: {state.Country}</Typography>*/}
-                                {/*</div>*/}
-
-                                {/*<div>*/}
-                                {/*    <Typography>Confirmed Case : {state.TotalConfirmed}</Typography>*/}
-                                {/*    <Typography>Deaths : {state.TotalDeaths}</Typography>*/}
-                                {/*    <Typography>Recovered : {state.TotalRecovered}</Typography>*/}
-                                {/*</div>*/}
 
                             </ExpansionPanelDetails>
                             <Divider/>
                         </ExpansionPanel>
                     ))}
-                </>
-            }
+                </Grid>
+            </Grid>
+
         </>
     )
 }

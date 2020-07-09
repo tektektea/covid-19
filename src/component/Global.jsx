@@ -12,51 +12,43 @@ import {fetchGlobal, setLoading} from "../app/action";
 import {connect} from "react-redux";
 import Grid from "@material-ui/core/Grid";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '100%',
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-    },
-    secondaryHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        color: theme.palette.text.secondary,
-    },
+const useStyles = makeStyles((theme) => ({}));
 
-}));
-const mapStateToProps = state => ({global: state.global, summary: state.globalSummary,loading:state.loading})
+const mapStateToProps = state => ({loading: state.loading, global: state.global, summary: state.globalSummary})
 const mapDispatchToProps = {
     fetchGlobalData: fetchGlobal,
-    setLoading:setLoading
+    setLoading,
 }
 
-function Global({fetchGlobalData, loading, global = [], summary,setLoading}) {
+function Global({loading, fetchGlobalData, global = [], summary}) {
     const classes = useStyles();
 
     useEffect(() => {
-        setLoading(true);
-        fetchGlobalData();
-    }, []);
+        fetchGlobalData()
+    }, [])
+
+    if (loading === true) {
+        return null;
+    }
     return (
-        <div className={classes.root}>
-            {loading ? null :
-                <>
-                    <Grid alignItems={"stretch"} container={true}>
-
-                        <Grid container={true} alignItems={"stretch"} xs={4}>
-                            <Panel icon={"accessible"} caption={"Confirmed case"} title={summary.TotalConfirmed}/>
-                        </Grid>
-                        <Grid container={true} alignItems={"stretch"} xs={4} >
-                            <Panel icon={"sentiment_very_dissatisfied"} caption={"Deaths"} title={summary.TotalDeaths}/>
-
-                        </Grid>
-                        <Grid container={true} alignItems={"stretch"} xs={4} >
-                            <Panel icon={"healing"} caption={"Recovered"} title={summary.TotalRecovered}/>
-
-                        </Grid>
+        <Grid  spacing={2} container={true}>
+            <Grid item={true}  sm={12} md={12} xs={12}>
+                <Grid spacing={2} container={true}>
+                    <Grid container item xs={4} sm={4} md={4}>
+                        <Panel icon={"accessible"} caption={"Confirmed case"} title={summary.TotalConfirmed}/>
                     </Grid>
-                    {Array.isArray(global) && global.map(country => (
+                    <Grid container item xs={4} sm={4} md={4}>
+                        <Panel icon={"sentiment_very_dissatisfied"} caption={"Deaths"} title={summary.TotalDeaths}/>
+                    </Grid>
+                    <Grid container={true} item xs={4} sm={4} md={4}>
+                        <Panel icon={"healing"} caption={"Recovered"} title={summary.TotalRecovered}/>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid md={12} sm={12} xs={12}>
+                {Array.isArray(global) && global.map(country => (
+                    //need to add key for react lists
+                    <div key={country.Country}>
                         <ExpansionPanel>
                             <ExpansionPanelSummary
                                 expandIcon={<ExpandMoreIcon/>}
@@ -88,12 +80,10 @@ function Global({fetchGlobalData, loading, global = [], summary,setLoading}) {
                             </ExpansionPanelDetails>
                             <Divider/>
                         </ExpansionPanel>
-                    ))}
-                </>
-            }
-
-
-        </div>
+                    </div>
+                ))}
+            </Grid>
+        </Grid>
     );
 }
 

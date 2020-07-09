@@ -3,11 +3,11 @@ import {
     AppBar,
     BottomNavigation,
     BottomNavigationAction,
-    Container,
     Grid,
     Icon,
     IconButton,
     Toolbar,
+    Snackbar,SnackbarContent,
     Typography
 } from "@material-ui/core";
 import {Route, Switch, useHistory} from "react-router-dom";
@@ -20,7 +20,7 @@ import PinIcon from '@material-ui/icons/PinDrop'
 import InfoIcon from '@material-ui/icons/Info'
 import LinearProgress from "@material-ui/core/LinearProgress";
 import {connect} from "react-redux";
-import mapDispatchToProps from "react-redux/lib/connect/mapDispatchToProps";
+import {setError, setLoading} from "./app/action";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -75,43 +75,68 @@ const BottomNav = () => {
                 <BottomNavigationAction label="India" icon={<PinIcon/>}/>
                 <BottomNavigationAction label="About" icon={<InfoIcon/>}/>
             </BottomNavigation>
-         </AppBar>
+        </AppBar>
     )
 }
 
 
-function App({loading}) {
+function App({loading,error,setError}) {
 
     const classes = useStyles();
 
     return (
-            <Grid  container={true}>
-                <Grid sm={12} style={{flexGrow: 1}} item={true}>
-                    <AppBar style={{top:0,bottom:"auto"}}>
-                        <Toolbar>
-                            <Typography variant="h6" className={classes.title}>
-                                Covid-19 Tracking app
-                            </Typography>
-                            <IconButton color={"inherit"} href={""} target={"_blank"} onClick={e=>window.open("https://github.com/tektektea","_blank")}>
-                                <Icon fontSize={"default"} className="fa fa-github"/>
-                            </IconButton>
-                        </Toolbar>
-                        {loading && <LinearProgress  color={"secondary"} variant="indeterminate"/>}
-                    </AppBar>
-                </Grid>
-                <Grid sm={12} style={{marginTop:50,marginBottom:50}} item={true}>
-                    <Switch>
-                        <Route exact={true} path={"/"} component={Global}/>
-                        <Route exact={true} path={"/india"} component={India}/>
-                        <Route exact={true} path={"/about"} component={About}/>
-                    </Switch>
-                </Grid>
-
-                <Grid sm={12} item={true}>
-                    <BottomNav/>
-                </Grid>
+        <Grid spacing={4} container={true}>
+            <Grid sm={12} md={12} xs={12} style={{flexGrow: 1}} item={true}>
+                <AppBar position={"fixed"}>
+                    <Toolbar>
+                        <Typography variant="h6" className={classes.title}>
+                            Covid-19 Tracking app
+                        </Typography>
+                        <IconButton color={"inherit"} href={""} target={"_blank"}
+                                    onClick={e => window.open("https://github.com/tektektea", "_blank")}>
+                            <Icon fontSize={"default"} className="fa fa-github"/>
+                        </IconButton>
+                    </Toolbar>
+                    {loading && <LinearProgress color={"secondary"} variant="indeterminate"/>}
+                </AppBar>
             </Grid>
+            <Grid xs={12} sm={12} md={12} lg={12} style={{marginTop: 50, marginBottom: 50}} item={true}>
+                <Switch>
+                    <Route exact={true} path={"/"} component={Global}/>
+                    <Route exact={true} path={"/india"} component={India}/>
+                    <Route exact={true} path={"/about"} component={About}/>
+                </Switch>
+            </Grid>
+
+            <Grid sm={12} item={true}>
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    open={Boolean(error)}
+                    autoHideDuration={6000}
+                    onClose={e => setError(null)}
+                    message={Boolean(error)?error.toString():""}
+                    action={
+                        <React.Fragment>
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={e=>setError(null)}>
+                                <Icon fontSize="small">close</Icon>
+                            </IconButton>
+                        </React.Fragment>
+                    }
+
+                />
+                <BottomNav/>
+
+
+            </Grid>
+        </Grid>
     );
 }
-const mapStateToProps=state=>({loading:state.loading})
-export default connect(mapStateToProps,mapDispatchToProps) (App);
+
+const mapStateToProps = state => ({loading: state.loading,error:state.error})
+const mapDispatchToProp = {
+    setError
+}
+export default connect(mapStateToProps, mapDispatchToProp)(App);
